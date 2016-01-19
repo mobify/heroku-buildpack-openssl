@@ -42,6 +42,17 @@ mkdir -p ${BUILD_TARGET_DIR}
 APP_TARGET_DIR="/app/openssl"
 mkdir -p ${BUILD_TARGET_DIR}
 
+VERSION_FILE=${BUILD_TARGET_DIR}/openssl/include/opensslv.h
+if [ -f ${VERSION_FILE} ] ; then
+    if fgrep -q "${OPENSSL_VERSION}" ${VERSION_FILE} ; then
+        echo "OpenSSL ${OPENSSL_VERSION} already installed" | topic
+        exit 0
+    else
+        echo "Removing existing installed OpenSSL" | topic
+        rm -rf ${BUILD_TARGET_DIR}/*
+    fi
+fi
+
 echo "Installing OpenSSL ${OPENSSL_VERSION}" | topic
 
 # Use the cached tar file if we find it
