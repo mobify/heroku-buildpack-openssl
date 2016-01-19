@@ -47,18 +47,18 @@ if [ ! -f ${BUILD_VENDOR_DIR}/include/openssl/opensslv.h ] ; then
         echo "Unpacking cached files..." | indent
         tar xvjf ${CACHED_TAR} -C ${BUILD_VENDOR_DIR}
     else
-        echo "Downloading and unpacking..." | indent
+        echo "Cached files not found - downloading and unpacking..." | indent
         curl -s https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz | tar xzf - -C ${BUILD_DIR}
 
         cd ${BUILD_DIR}/openssl-${OPENSSL_VERSION}
         ./config --prefix=${BUILD_VENDOR_DIR} 2>&1 | indent
         echo "Building..." | indent
-        make -s 2>&1 | indent
-        make -s install_sw 2>&1 | indent
-        make -s clean 2>&1 | indent
+        make -s
+        make -s install_sw
+        make -s clean
 
         # Save the build artefacts
-        tar cjf ${CACHED_TAR} -C ${BUILD_VENDOR_DIR}
+        (cd ${BUILD_VENDOR_DIR} ; tar cjf ${CACHED_TAR} .)
 
         echo "Creating .profile.d entry" | topic
         mkdir -p ${BUILD_DIR}/.profile.d
