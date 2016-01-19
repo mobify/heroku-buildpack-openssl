@@ -25,7 +25,7 @@ if [ ! -f ${CACHE_DIR}/openssl-${OPENSSL_VERSION}.tar.gz ] ; then
   bpwatch stop download
 fi
 
-if [ ! -f ${BUILD_DIR}/.heroku/vendor/include/openssl/openssl.h ] ; then
+if [ ! -f ${BUILD_DIR}/.heroku/vendor/include/openssl/opensslv.h ] ; then
     bpwatch start unpack
     echo "Unpacking ..." | indent
     tar xzf ${CACHE_DIR}/openssl-${OPENSSL_VERSION}.tar.gz -C ${BUILD_DIR}
@@ -33,7 +33,7 @@ if [ ! -f ${BUILD_DIR}/.heroku/vendor/include/openssl/openssl.h ] ; then
     bpwatch start build
     pushd ${BUILD_DIR}/openssl-${OPENSSL_VERSION}
     ./config --prefix=${BUILD_DIR}/.heroku/vendor
-    make && make install
+    make && make install && make clean
     popd
     bpwatch stop build
 fi
