@@ -36,29 +36,34 @@ CACHED_TAR=${CACHE_DIR}/openssl-${OPENSSL_VERSION}-heroku.tar.bz2
 BUILD_VENDOR_DIR="${BUILD_DIR}/.heroku/vendor"
 mkdir -p ${BUILD_VENDOR_DIR}
 
-# This is the path that will be used at dyno runtime.
+# This is the path that will be used at dyno runtime, and in which
+# we build.
 APP_VENDOR_DIR="/app/.heroku/vendor"
+mkdir -p ${BUILD_VENDOR_DIR}
 
 if [ ! -f ${BUILD_VENDOR_DIR}/include/openssl/opensslv.h ] ; then
     echo "Installing OpenSSL ${OPENSSL_VERSION}" | topic
 
     # Use the cached tar file if we find it
-    if [ -f ${CACHED_TAR} ] ; then
-        echo "Unpacking cached files..." | indent
-        tar xvjf ${CACHED_TAR} -C ${BUILD_VENDOR_DIR}
-    else
+    if [ ! -f ${CACHED_TAR} ] ; then
         echo "Cached files not found - downloading and unpacking..." | indent
         curl -s https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz | tar xzf - -C ${BUILD_DIR}
 
         cd ${BUILD_DIR}/openssl-${OPENSSL_VERSION}
-        ./config --prefix=${BUILD_VENDOR_DIR} 2>&1 | indent
-        echo "Building..." | indent
-        make -s
-        make -s install_sw
-        make -s clean
+
+        # We must build at /app/... rather than in the BUILD_DIR because
+        # the installation hardwires some paths and symlinks. In order for
+        # these to be in the right location at dyno runtime, we have to
+        # build using the same path that applies at dyno runtime.
+        ./config --prefix=${APP_VENDOR_DIR} 2>&1 | indent
+        echo "Building at ${APP_VENDOR_DIR}..." | indent
+        make -j -s
+        make -j -s install_sw
+        make -j -s clean
 
         # Save the build artefacts
-        (cd ${BUILD_VENDOR_DIR} ; tar cjf ${CACHED_TAR} .)
+        echo "Caching..." | indent
+        (cd ${APP_VENDOR_DIR} ; tar cjf ${CACHED_TAR} .)
 
         echo "Creating .profile.d entry" | topic
         mkdir -p ${BUILD_DIR}/.profile.d
@@ -74,6 +79,9 @@ export LD_LIBRARY_PATH="${BUILD_VENDOR_DIR}/lib:${LD_LIBRARY_PATH}"
 EOF
         chmod +x ${BUILD_DIR}/.profile.d/openssl.sh
     fi
+
+    echo "Unpacking cached files..." | indent
+    tar xvjf ${CACHED_TAR} -C ${BUILD_VENDOR_DIR}
 
     echo "Install of OpenSSL ${OPENSSL_VERSION} complete" | indent
 fi
