@@ -66,7 +66,7 @@ if [ ! -f ${CACHED_TAR} ] ; then
     # the installation hardwires some paths and symlinks. In order for
     # these to be in the right location at dyno runtime, we have to
     # build using the same path that applies at dyno runtime.
-    ./config --prefix=${APP_TARGET_DIR} 2>&1 | indent
+    ./config --prefix=${APP_TARGET_DIR} -fPIC 2>&1 | indent
     echo "Building at ${APP_TARGET_DIR}..." | indent
     make -j -s
     make -j -s install_sw
