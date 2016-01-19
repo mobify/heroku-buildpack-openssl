@@ -81,7 +81,7 @@ EOF
     fi
 
     echo "Unpacking cached files..." | indent
-    tar xvjf ${CACHED_TAR} -C ${BUILD_VENDOR_DIR}
+    tar xjf ${CACHED_TAR} -C ${BUILD_VENDOR_DIR}
 
     echo "Install of OpenSSL ${OPENSSL_VERSION} complete" | indent
 fi
