@@ -2,6 +2,9 @@
 # Usage:
 #
 #     $ bin/compile <build-dir> <cache-dir> <env-path>
+# E.g.
+# BUILD_DIR is /tmp/build_5b72bfcaef1adfe4bb7a9e34d80201fc
+# CACHE_DIR is  app
 
 indent() {
   sed "s/^/       /"
@@ -17,6 +20,8 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 
+echo "BIN_DIR=${BIN_DIR}, ROOT_DIR=${ROOT_DIR}, BUILD_DIR=${BUILD_DIR}, CACHE_DIR=${CACHE_DIR}, pwd=$(pwd)" | indent
+
 OPENSSL_VERSION="1.0.2e"
 
 # Does the download file exist? openssl-1.0.2e.tar.gz
@@ -25,11 +30,12 @@ if [ ! -f ${CACHE_DIR}/openssl-${OPENSSL_VERSION}.tar.gz ] ; then
   curl -# -o ${CACHE_DIR}/openssl-${OPENSSL_VERSION}.tar.gz https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz
 fi
 
-if [ ! -f ${BUILD_DIR}/.heroku/vendor/include/openssl/opensslv.h ] ; then
-    echo "Unpacking ..." | indent
+VENDOR_DIR=${ROOT_DIR}/.heroku/vendor
+if [ ! -f ${VENDOR_DIR}/include/openssl/opensslv.h ] ; then
+    echo "Unpacking and building..." | indent
     tar xzf ${CACHE_DIR}/openssl-${OPENSSL_VERSION}.tar.gz -C ${BUILD_DIR}
     pushd ${BUILD_DIR}/openssl-${OPENSSL_VERSION}
-    ./config --prefix=${BUILD_DIR}/.heroku/vendor
+    ./config --prefix=${VENDOR_DIR}
     make && make install && make clean
     popd
 fi
