@@ -59,7 +59,8 @@ if [ ! -f ${CACHED_TAR} ] ; then
     echo "Building at ${APP_TARGET_DIR}..." | indent
     make -j -s
     make -j -s install_sw
-    make -j -s clean
+    cd ${BUILD_DIR}
+    rm -rf ${BUILD_DIR}/openssl-${OPENSSL_VERSION}
 
     # Save the build artefacts
     echo "Caching..." | indent
