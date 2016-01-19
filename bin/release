@@ -1,18 +1,4 @@
 #!/usr/bin/env bash
 # bin/release <build-dir>
 
-BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
-BUILD_DIR=$1
-APP_DIR=/app
-VENDOR_DIR=${APP_DIR}/.heroku/vendor
-
-cat <<EOF
----
-config_vars:
-    PATH: ${VENDOR_DIR}/bin:$PATH
-    PKG_CONFIG_PATH: ${VENDOR_DIR}/lib/pkgconfig:${PKG_CONFIG_PATH}
-    INCLUDE_PATH: ${VENDOR_DIR}/include:${VENDOR_DIR}/include/openssl:${INCLUDE_PATH}
-    LIBRARY_PATH: ${VENDOR_DIR}/lib:${LIBRARY_PATH}
-    LD_LIBRARY_PATH: ${VENDOR_DIR}/lib:${LD_LIBRARY_PATH}
-
-EOF
+echo -n ""
