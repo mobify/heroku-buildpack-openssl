@@ -3,6 +3,10 @@
 # ## Usage
 #     $ bin/detect <build-dir> <cache-dir>
 
+indent() {
+  sed "s/^/       /"
+}
+
 # This buildpack always runs
 echo "BUILD_DIR is $1" | indent
 echo "CACHE_DIR is $2" | indent

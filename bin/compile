@@ -3,6 +3,10 @@
 #
 #     $ bin/compile <build-dir> <cache-dir> <env-path>
 
+indent() {
+  sed "s/^/       /"
+}
+
 # Fail fast and fail hard.
 set -eo pipefail
 
