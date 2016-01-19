@@ -6,8 +6,6 @@
 # Fail fast and fail hard.
 set -eo pipefail
 
-bpwatch start compile
-
 # Paths.
 BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
 ROOT_DIR=$(dirname $BIN_DIR)
@@ -19,23 +17,16 @@ OPENSSL_VERSION="1.0.2e"
 
 # Does the download file exist? openssl-1.0.2e.tar.gz
 if [ ! -f ${CACHE_DIR}/openssl-${OPENSSL_VERSION}.tar.gz ] ; then
-  bpwatch start download
   echo "Downloading OpenSSL ${OPENSSL_VERSION}" | indent
   curl -# -o ${CACHE_DIR}/openssl-${OPENSSL_VERSION}.tar.gz https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz
-  bpwatch stop download
 fi
 
 if [ ! -f ${BUILD_DIR}/.heroku/vendor/include/openssl/opensslv.h ] ; then
-    bpwatch start unpack
     echo "Unpacking ..." | indent
     tar xzf ${CACHE_DIR}/openssl-${OPENSSL_VERSION}.tar.gz -C ${BUILD_DIR}
-    bpwatch stop unpack
-    bpwatch start build
     pushd ${BUILD_DIR}/openssl-${OPENSSL_VERSION}
     ./config --prefix=${BUILD_DIR}/.heroku/vendor
     make && make install && make clean
     popd
-    bpwatch stop build
 fi
 
-bpwatch stop compile

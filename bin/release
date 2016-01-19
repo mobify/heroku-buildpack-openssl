@@ -7,11 +7,10 @@ BUILD_DIR=$1
 cat <<EOF
 ---
 config_vars:
-    PKG_CONFIG_PATH=${BUILD_DIR}/.heroku/vendor/openssl/lib/pkgconfig:${PKG_CONFIG_PATH}
-    INCLUDE_PATH=${BUILD_DIR}/.heroku/vendor/openssl/include:${BUILD_DIR}/.heroku/vendor/openssl/include/openssl:${INCLUDE_PATH}
-    LIBRARY_PATH=${BUILD_DIR}/.heroku/vendor/openssl/lib:${LIBRARY_PATH}
-    LD_LIBRARY_PATH=${BUILD_DIR}/.heroku/vendor/openssl/lib:${LD_LIBRARY_PATH}
+    PATH=${BUILD_DIR}/.heroku/vendor/bin:$PATH
+    PKG_CONFIG_PATH=${BUILD_DIR}/.heroku/vendor/lib/pkgconfig:${PKG_CONFIG_PATH}
+    INCLUDE_PATH=${BUILD_DIR}/.heroku/vendor/include:${BUILD_DIR}/.heroku/vendor/include/openssl:${INCLUDE_PATH}
+    LIBRARY_PATH=${BUILD_DIR}/.heroku/vendor/lib:${LIBRARY_PATH}
+    LD_LIBRARY_PATH=${BUILD_DIR}/.heroku/vendor/lib:${LD_LIBRARY_PATH}
 
 EOF
-
-
