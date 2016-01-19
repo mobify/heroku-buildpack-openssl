@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# bin/release <build-dir>
+
+BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
+BUILD_DIR=$1
+
+cat <<EOF
+---
+config_vars:
+    PKG_CONFIG_PATH=${BUILD_DIR}/.heroku/vendor/openssl/lib/pkgconfig:${PKG_CONFIG_PATH}
+    INCLUDE_PATH=${BUILD_DIR}/.heroku/vendor/openssl/include:${BUILD_DIR}/.heroku/vendor/openssl/include/openssl:${INCLUDE_PATH}
+    LIBRARY_PATH=${BUILD_DIR}/.heroku/vendor/openssl/lib:${LIBRARY_PATH}
+    LD_LIBRARY_PATH=${BUILD_DIR}/.heroku/vendor/openssl/lib:${LD_LIBRARY_PATH}
+
+EOF
+
+

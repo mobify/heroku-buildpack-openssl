@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# ## Usage
+#     $ bin/detect <build-dir> <cache-dir>
+
+# This buildpack always runs
+exit 0
