@@ -3,14 +3,16 @@
 
 BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
 BUILD_DIR=$1
+APP_DIR=/app
+VENDOR_DIR=${APP_DIR}/.heroku/vendor
 
 cat <<EOF
 ---
 config_vars:
-    PATH: ${BUILD_DIR}/.heroku/vendor/bin:$PATH
-    PKG_CONFIG_PATH: ${BUILD_DIR}/.heroku/vendor/lib/pkgconfig:${PKG_CONFIG_PATH}
-    INCLUDE_PATH: ${BUILD_DIR}/.heroku/vendor/include:${BUILD_DIR}/.heroku/vendor/include/openssl:${INCLUDE_PATH}
-    LIBRARY_PATH: ${BUILD_DIR}/.heroku/vendor/lib:${LIBRARY_PATH}
-    LD_LIBRARY_PATH: ${BUILD_DIR}/.heroku/vendor/lib:${LD_LIBRARY_PATH}
+    PATH: ${VENDOR_DIR}/bin:$PATH
+    PKG_CONFIG_PATH: ${VENDOR_DIR}/lib/pkgconfig:${PKG_CONFIG_PATH}
+    INCLUDE_PATH: ${VENDOR_DIR}/include:${VENDOR_DIR}/include/openssl:${INCLUDE_PATH}
+    LIBRARY_PATH: ${VENDOR_DIR}/lib:${LIBRARY_PATH}
+    LD_LIBRARY_PATH: ${VENDOR_DIR}/lib:${LD_LIBRARY_PATH}
 
 EOF

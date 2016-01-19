@@ -19,21 +19,20 @@ ROOT_DIR=$(dirname $BIN_DIR)
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
+APP_DIR=/app
 
-echo "BIN_DIR=${BIN_DIR}, ROOT_DIR=${ROOT_DIR}, BUILD_DIR=${BUILD_DIR}, CACHE_DIR=${CACHE_DIR}, pwd=$(pwd)" | indent
+echo "APP_DIR=${APP_DIR} BIN_DIR=${BIN_DIR}, ROOT_DIR=${ROOT_DIR}, BUILD_DIR=${BUILD_DIR}, CACHE_DIR=${CACHE_DIR}, pwd=$(pwd)" | indent
 
 OPENSSL_VERSION="1.0.2e"
 
-# Does the download file exist? openssl-1.0.2e.tar.gz
-if [ ! -f ${CACHE_DIR}/openssl-${OPENSSL_VERSION}.tar.gz ] ; then
-  echo "Downloading OpenSSL ${OPENSSL_VERSION}" | indent
-  curl -# -o ${CACHE_DIR}/openssl-${OPENSSL_VERSION}.tar.gz https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz
-fi
-
-VENDOR_DIR=${ROOT_DIR}/.heroku/vendor
+VENDOR_DIR=${APP_DIR}/.heroku/vendor
 if [ ! -f ${VENDOR_DIR}/include/openssl/opensslv.h ] ; then
+    echo "Downloading OpenSSL ${OPENSSL_VERSION}" | indent
+    curl -# -o ${CACHE_DIR}/openssl-${OPENSSL_VERSION}.tar.gz https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz
+
     echo "Unpacking and building..." | indent
     tar xzf ${CACHE_DIR}/openssl-${OPENSSL_VERSION}.tar.gz -C ${BUILD_DIR}
+
     pushd ${BUILD_DIR}/openssl-${OPENSSL_VERSION}
     ./config --prefix=${VENDOR_DIR}
     make && make install && make clean
