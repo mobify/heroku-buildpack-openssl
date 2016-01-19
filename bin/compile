@@ -17,19 +17,25 @@ ENV_DIR=$3
 
 OPENSSL_VERSION="1.0.2e"
 
-# Does the download file exist?
-if [ ! -f ${CACHE_DIR}/openssl-${OPENSSL_VERSION}-heroku.tar.bz2 ] ; then
+# Does the download file exist? openssl-1.0.2e.tar.gz
+if [ ! -f ${CACHE_DIR}/openssl-${OPENSSL_VERSION}.tar.gz ] ; then
   bpwatch start download
   echo "Downloading OpenSSL ${OPENSSL_VERSION}" | indent
-  curl -# -o ${CACHE_DIR}/openssl-${OPENSSL_VERSION}-heroku.tar.bz2 https://s3-us-west-2.amazonaws.com/packages.mobify.com/openssl-${OPENSSL_VERSION}/openssl-${OPENSSL_VERSION}-heroku.tar.bz2
+  curl -# -o ${CACHE_DIR}/openssl-${OPENSSL_VERSION}.tar.gz https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz
   bpwatch stop download
 fi
 
-if [ ! -d ${BUILD_DIR}/.heroku/vendor/openssl ] ; then
+if [ ! -f ${BUILD_DIR}/.heroku/vendor/include/openssl/openssl.h ] ; then
     bpwatch start unpack
     echo "Unpacking ..." | indent
-    tar xjf ${CACHE_DIR}/openssl-${OPENSSL_VERSION}-heroku.tar.bz2 -C ${BUILD_DIR}
+    tar xzf ${CACHE_DIR}/openssl-${OPENSSL_VERSION}.tar.gz -C ${BUILD_DIR}
     bpwatch stop unpack
+    bpwatch start build
+    pushd ${BUILD_DIR}/openssl-${OPENSSL_VERSION}
+    ./config --prefix=${BUILD_DIR}/.heroku/vendor
+    make && make install
+    popd
+    bpwatch stop build
 fi
 
 bpwatch stop compile
